@@ -56,8 +56,7 @@ def echo(bot):
 
         if update.message:  # your bot can receive updates without messages
             if update.message.text == '/score@packscoreBot':
-                for x in message_formatter(select_db_info()):
-                    bot.send_message(update.effective_chat.id, x)
+                bot.send_message(update.effective_chat.id, message_formatter(select_db_info()))
             if update.message.text == '/info@packscoreBot':
                 update.message.reply_text("Правила следующие:")
                 pass
