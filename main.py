@@ -8,7 +8,10 @@ import telegram
 from telegram.error import NetworkError, Unauthorized
 from time import sleep
 import sys
+
+
 import config
+
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -40,6 +43,10 @@ def main():
             update_id += 1
 
 
+def info(update):
+    update.message.reply_text('Hi!')
+
+
 def echo(bot):
     """Echo the message the user sent."""
     global update_id
@@ -48,6 +55,13 @@ def echo(bot):
         update_id = update.update_id + 1
 
         if update.message:  # your bot can receive updates without messages
+            if update.message.text == '/score@packscoreBot':
+                for x in message_formatter(select_db_info()):
+                    bot.send_message(update.effective_chat.id, x)
+            if update.message.text == '/info@packscoreBot':
+                update.message.reply_text("Правила следующие:")
+                pass
+
             if update.message.text[0] == '+':
                 update.message.reply_text(str(update.message.text)+' паков')
                 into_db(update.effective_message.date, update.message.text, \
@@ -55,7 +69,6 @@ def echo(bot):
 
 
 def into_db(message_date, message_text, chat_id, user_name):
-    print(message_date.isoformat(sep=' '), message_text, chat_id, user_name)
     cursor.execute("""INSERT INTO pack_counter (
                      datetime,
                      message,
@@ -67,6 +80,22 @@ def into_db(message_date, message_text, chat_id, user_name):
                    (message_date.isoformat(sep=' '), message_text, chat_id, user_name))
 
     conn.commit()
+
+
+def select_db_info():
+    cursor.execute("""SELECT distinct(user_name), sum(message) FROM pack_counter
+                              WHERE user_name is not null
+                              AND date(datetime) = date('now') 
+                              GROUP BY user_name
+                              ORDER BY message ASC""")
+    result = cursor.fetchall()
+    return result
+
+
+def message_formatter(sql_resut):
+    for x, y in sql_resut:
+        json = '''%s, %s''' % (x, y)
+        return json
 
 
 if __name__ == '__main__':
