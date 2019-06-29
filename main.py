@@ -48,9 +48,9 @@ def echo(bot):
         update_id = update.update_id + 1
 
         if update.message:  # your bot can receive updates without messages
-            if update.message.text[0] == '+' or update.message.text[0] == '-':
-                update.message.reply_text('хорош, '+str(update.message.text)+' паков')
-                into_db(update.effective_message.date, update.message.text,
+            if update.message.text[0] == '+':
+                update.message.reply_text(str(update.message.text)+' паков')
+                into_db(update.effective_message.date, update.message.text, \
                         update.effective_chat.id, update.effective_user.name)
 
 
