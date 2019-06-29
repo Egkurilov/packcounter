@@ -8,6 +8,7 @@ import telegram
 from telegram.error import NetworkError, Unauthorized
 from time import sleep
 import sys
+import config
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -20,7 +21,7 @@ cursor = conn.cursor()
 def main():
     """Run the bot."""
     global update_id
-    bot = telegram.Bot('887277310:AAGP9uz9SnqM1izXCjrnN1Owfx06n5ZNeko')
+    bot = telegram.Bot(config.TOKEN)
 
     try:
         update_id = bot.get_updates()[0].update_id
