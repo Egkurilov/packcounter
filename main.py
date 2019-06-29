@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Simple Bot to reply to Telegram messages.
-This is built on the API wrapper, see echobot2.py to see the same example built
-on the telegram.ext bot framework.
-This program is dedicated to the public domain under the CC0 license.
-"""
+
 import logging
 import sqlite3
 
@@ -51,10 +47,10 @@ def echo(bot):
         update_id = update.update_id + 1
 
         if update.message:  # your bot can receive updates without messages
-            # Reply to the message
             if update.message.text[0] == '+' or update.message.text[0] == '-':
                 update.message.reply_text('хорош, '+str(update.message.text)+' паков')
-                into_db(update.effective_message.date, update.message.text, update.effective_chat.id, update.effective_user.name)
+                into_db(update.effective_message.date, update.message.text,
+                        update.effective_chat.id, update.effective_user.name)
 
 
 def into_db(message_date, message_text, chat_id, user_name):
@@ -66,7 +62,8 @@ def into_db(message_date, message_text, chat_id, user_name):
                      user_name
                     )
                     VALUES
-                     ('%s', '%s' ,'%s', '%s');""" % (message_date.isoformat(sep=' '), message_text, chat_id, user_name))
+                     ('%s', '%s' ,'%s', '%s');""" %
+                   (message_date.isoformat(sep=' '), message_text, chat_id, user_name))
 
     conn.commit()
 
