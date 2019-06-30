@@ -8,7 +8,7 @@ import telegram
 from telegram.error import NetworkError, Unauthorized
 from time import sleep
 import sys
-
+import time
 
 import config
 
@@ -19,6 +19,13 @@ sys.setdefaultencoding('utf-8')
 update_id = None
 conn = sqlite3.connect("mydatabase.db")
 cursor = conn.cursor()
+
+RULE = '''Привет, игра началась!
+            Правила - простые, каждый раз когда ты сдал или отвез паки, пиши в чат + и количество паков.
+            Побеждает тот, кто занял первое место по итогу дня. (счетчик обновляется каждую ночь). 
+            Доступные на данный момент команды:
+            /score
+            /info'''
 
 
 def main():
@@ -55,16 +62,18 @@ def echo(bot):
         update_id = update.update_id + 1
 
         if update.message:  # your bot can receive updates without messages
+
             if update.message.text == '/score@packscoreBot':
-                bot.send_message(update.effective_chat.id, message_formatter(select_db_info()))
+                bot.send_message(update.effective_chat.id, select_db_info())
             if update.message.text == '/info@packscoreBot':
                 update.message.reply_text("Правила следующие:")
-                pass
-
+                bot.send_message(update.effective_chat.id, RULE)
             if update.message.text[0] == '+':
                 update.message.reply_text(str(update.message.text)+' паков')
                 into_db(update.effective_message.date, update.message.text, \
                         update.effective_chat.id, update.effective_user.name)
+            else:
+                    pass
 
 
 def into_db(message_date, message_text, chat_id, user_name):
@@ -88,13 +97,10 @@ def select_db_info():
                               GROUP BY user_name
                               ORDER BY message ASC""")
     result = cursor.fetchall()
-    return result
+    gg= " ".join(str(x) for x in result)
+    return(gg)
 
 
-def message_formatter(sql_resut):
-    for x, y in sql_resut:
-        json = '''%s, %s''' % (x, y)
-        return json
 
 
 if __name__ == '__main__':

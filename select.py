@@ -11,12 +11,11 @@ def select_db_info():
                               GROUP BY user_name
                               ORDER BY message ASC""")
     result = cursor.fetchall()
-    return result
+    gg= " ".join(str(x) for x in result)
+    return(gg)
 
 
-def message_formatter(sql_resut):
-    for x, y in sql_resut:
-        json = '''%s, %s''' % (x, y)
-        print(json)
 
-message_formatter(select_db_info())
+
+
+select_db_info()
