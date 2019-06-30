@@ -60,20 +60,22 @@ def echo(bot):
     # Request updates after the last update_id
     for update in bot.get_updates(offset=update_id, timeout=10):
         update_id = update.update_id + 1
-
         if update.message:  # your bot can receive updates without messages
-
-            if update.message.text == '/score@packscoreBot':
-                bot.send_message(update.effective_chat.id, select_db_info())
-            if update.message.text == '/info@packscoreBot':
-                update.message.reply_text("Правила следующие:")
-                bot.send_message(update.effective_chat.id, RULE)
-            if update.message.text[0] == '+':
-                update.message.reply_text(str(update.message.text)+' паков')
-                into_db(update.effective_message.date, update.message.text, \
-                        update.effective_chat.id, update.effective_user.name)
-            else:
-                    pass
+            if update.message.text is not None:
+                if update.message.text == '/score@packscoreBot':
+                    bot.send_message(update.effective_chat.id, repr(select_db_info()).decode("unicode_escape"))
+                if update.message.text == '/info@packscoreBot':
+                    update.message.reply_text("Правила следующие:")
+                    bot.send_message(update.effective_chat.id, RULE)
+                if update.message.text[0] == '+':
+                    if update.message.text[1:].isnumeric():
+                        update.message.reply_text(str(update.message.text)+' паков')
+                        into_db(update.effective_message.date, update.message.text, \
+                                update.effective_chat.id, update.effective_user.name)
+                    else:
+                        update.message.reply_text("Try Again")
+                else:
+                        pass
 
 
 def into_db(message_date, message_text, chat_id, user_name):

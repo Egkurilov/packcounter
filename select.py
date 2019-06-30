@@ -14,8 +14,14 @@ def select_db_info():
     gg= " ".join(str(x) for x in result)
     return(gg)
 
+def delete():
+    cursor.execute("""delete from pack_counter""")
+    result = cursor.fetchall()
+
+    conn.commit()
 
 
 
 
-select_db_info()
+
+delete()
